@@ -33,7 +33,7 @@ struct ProfileHeaderView: View {
             Text("Gotham's Dark night || Billionaire.")
                 .font(.system(size: 15))
                 .padding(.leading)
-                .padding(.top, -1)
+                
             
             HStack {
                 Spacer()

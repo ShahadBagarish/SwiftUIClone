@@ -21,6 +21,7 @@ class AuthViewModal: ObservableObject {
         
         //API call to database to check if the user session nill or not
         userSession = Auth.auth().currentUser
+        fetchUsers()
     }
     
     func login(withEmail email: String, password: String){
@@ -67,9 +68,18 @@ class AuthViewModal: ObservableObject {
                 //                    self.userSession = user
                 //                }
                 //3. send the dictionary to the firebase
-                
-                db.collection("user").document("test user").setData(data) { _ in
-                    
+                var ref: DocumentReference? = nil
+                ref = COLLECTION_USERS.addDocument(data: data) { err in
+                    if let err = err {
+                        print("Error adding document: \(err)")
+                    } else {
+                        print("Document added with ID: \(ref!.documentID)")
+                        print("Successfully uploaded userdata ...")
+                        self.userSession = user
+                    }
+                }
+
+                COLLECTION_USERS.document("test user").setData(data) { _ in
                     print("Successfully uploaded userdata ...")
                     self.userSession = user
                 }
@@ -87,7 +97,26 @@ class AuthViewModal: ObservableObject {
         
     }
     func fetchUsers(){
+        guard let uid = userSession?.uid else { return }
+        COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
+            guard let user = try? snapshot?.data(as: User.self) else { return }
+            print("DEBUG: User is \(user.username)")
+            
         
+//            guard let dictionary = snapshot?.data() else { return }
+//            guard let username = dictionary["username"] as? String else { return }
+//            guard let email = dictionary["email"] as? String else { return }
+//
+//
+//            let user = User(username: username, email: email, profileImageURL: username, fullname: username, uid: username)
+//
+//            print(user.username)
+            
+            // Insted of doing this to fetch the data you have to create model 
+//            guard let username = dictionary["username"] as? String else { return }
+//            print(("DEBUG: username is\(snapshot?.data())") )
+            
+        }
     }
 }
 
